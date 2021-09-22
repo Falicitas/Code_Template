@@ -59,6 +59,7 @@ struct suspended_line {
 
 int main() {
     int n, m;
+    int a[n];
     cin >> n >> m;
     vector<vector<int>> Map(n, vector<int>(m));
     for (int i = 0; i < n; i++) {

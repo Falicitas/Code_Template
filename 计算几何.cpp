@@ -2,40 +2,40 @@
 using namespace std;
 const double PI = acos(-1.0);
 typedef unsigned long long ll;
-struct point {
+struct point3D {
     double x, y, z;
-    point() {
+    point3D() {
     }
-    point(double a, double b, double c) {
+    point3D(double a, double b, double c) {
         x = a;
         y = b;
         z = c;
     }
-    point operator-(const point& b) const {  //返回减去后的新点
-        return point(x - b.x, y - b.y, z - b.z);
+    point3D operator-(const point3D& b) const {  //返回减去后的新点
+        return point3D(x - b.x, y - b.y, z - b.z);
     }
-    point operator+(const point& b) const {  //返回加上后的新点
-        return point(x + b.x, y + b.y, z + b.z);
+    point3D operator+(const point3D& b) const {  //返回加上后的新点
+        return point3D(x + b.x, y + b.y, z + b.z);
     }
     //数乘计算
-    point operator*(const double& k) const {  //返回相乘后的新点
-        return point(x * k, y * k, z * k);
+    point3D operator*(const double& k) const {  //返回相乘后的新点
+        return point3D(x * k, y * k, z * k);
     }
-    point operator/(const double& k) const {  //返回相除后的新点
-        return point(x / k, y / k, z / k);
+    point3D operator/(const double& k) const {  //返回相除后的新点
+        return point3D(x / k, y / k, z / k);
     }
-    double operator*(const point& b) const {  //点乘
+    double operator*(const point3D& b) const {  //点乘
         return x * b.x + y * b.y + z * b.z;
     }
 };
 
-double dist(point p1, point p2) {  //返回平面上两点距离
+double dist(point3D p1, point3D p2) {  //返回平面上两点距离
     return sqrt((p1 - p2) * (p1 - p2));
 }
 
 struct sphere {  //球
     double r;
-    point centre;
+    point3D centre;
 };
 
 namespace Geometry {
