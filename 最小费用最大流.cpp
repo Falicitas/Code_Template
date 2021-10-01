@@ -113,7 +113,7 @@ struct cost_flow {
     }
 };
 
-main() {
+int main() {
     //freopen("in.txt", "r", stdin);
     ios::sync_with_stdio(0);
     cin.tie(0), cout.tie(0);

@@ -22,3 +22,26 @@ accumulate(iterator first, iterator last, T ini, [BinaryOperation binary_op]);  
         return x + 3 * y;
     });
 }  //a = 180
+
+nth_element(begin(numbers), begin(numbers) + k, end(numbers));  //函数：调用完函数，此时第二个参数的位置的左侧都比该位置小（但不一定有序），右侧都比该位置大（但不一定有序）。
+{                                                               //实例
+    vector<int> vec{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    reverse(vec.begin(), vec.end());
+    nth_element(vec.begin(), vec.begin() + 5, vec.end());
+    for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it) {
+        cout << *it << " ";
+    }
+    cout << "\n";
+    //5 1 2 3 4 6 7 10 8 9
+}
+partition(ForwardIterator first, ForwardIterator last, UnaryPredicate pred)  //ForwardIterator指正向迭代器iterator
+{                                                                            //实例
+    vector<int> vec{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    auto bound = std::partition(vec.begin(), vec.end(), [](int i) {
+        return i % 2 == 1;
+    });
+    for (std::vector<int>::iterator it = vec.begin(); it != vec.end(); ++it) {
+        cout << *it << " ";
+    }
+    //1 3 5 7 9 2 4 6 8 10
+}

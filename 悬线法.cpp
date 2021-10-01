@@ -8,7 +8,10 @@ struct suspended_line {
         : n(n), m(m), a(a) {
         l = vector<vector<int>>(n, vector<int>(m));
         r = l, up = l;
-        /*以下初始化l,r。对于l,r的初始化根据题目而定。以下为求极大子矩阵时的初始化*/
+        }
+
+    void run() {  //必然访问了所有极大子矩阵
+                  /*以下初始化l,r。对于l,r的初始化根据题目而定。以下为求极大子矩阵时的初始化*/
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 if (!a[i][j]) {
@@ -16,9 +19,6 @@ struct suspended_line {
                 }
             }
         }
-    }
-
-    void run() {  //必然访问了所有极大子矩阵
         for (int i = 0; i < n; ++i) {
             for (int j = 1; j < m; ++j) {
                 if (!a[i][j] && !a[i][j - 1]) {

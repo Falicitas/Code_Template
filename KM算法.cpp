@@ -1,39 +1,55 @@
-int dfs(int u)
-{
-    visx[u] = 1;
-    for(int v=1;v<=m;v++){//m指m = max(n,m)
-        if(!visy[v]&&lx[u]+ly[v]==w[u][v]){
-            visy[v] = 1;
-            if(link[v]==-1||dfs(link[v])){
-                link[v] = u;
-                return 1;
-            }
-        }
-    }
-    return 0;
-}
+#include <bits/stdc++.h>
+using namespace std;
 
-void KM()
-{
-    memset(ly,0,sizeof ly);
-    memset(lx,0xf7,sizeof lx);//极小值
-    memset(link,-1,sizeof link);
-    REP(i,1,m) REP(j,1,m) lx[i] = max(w[i][j],lx[i]);
-    REP(u,1,n){
-        while(1){
-            memset(visx,0,sizeof visx);
-            memset(visy,0,sizeof visy);
-            if(dfs(u)) break;
-            int delt = inf;
-            REP(j,1,n) if(visx[j]) REP(k,1,m) if(!visy[k]) delt = min(delt,lx[j]+ly[k]-w[j][k]);
-            if(delt==inf) return -1;
-            REP(i,1,n) if(visx[i]) lx[i] -= delt;
-            REP(i,1,n) if(visy[i]) ly[i] += delt;
-        }
+using i64 = long long;
+
+struct KM {  //求最小完美匹配的板子。求最大完美匹配，将边权矩阵取负即可。对于边数=O(n^2)，快过费用流
+    const i64 inf = 0x3f3f3f3f3f3f3f3f;
+    vector<vector<i64>> w;
+    int n, m;
+    KM(int n_, int m_, vector<vector<i64>> w_)
+        : n(n_), m(max(m_, n_)), w(w_) {
     }
-    /*因为最后是完美匹配，加上顶标就完事了
-    int ans = 0;
-    REP(i,1,n) ans += lx[i];
-    REP(j,1,m) ans += ly[i];
-    */
-}
+    i64 km() {
+        std::vector<i64> u(n + 1), v(m + 1), p(m + 1), way(m + 1);
+        for (int i = 1; i <= n; i++) {
+            p[0] = i;
+            i64 j0 = 0;
+            std::vector<i64> minv(m + 1, inf);
+            std::vector<char> used(m + 1, false);
+            do {
+                used[j0] = true;
+                i64 i0 = p[j0], delta = inf, j1;
+                for (int j = 1; j <= m; ++j) {
+                    if (!used[j]) {
+                        i64 cur = w[i0][j] - u[i0] - v[j];
+                        if (cur < minv[j]) {
+                            minv[j] = cur, way[j] = j0;
+                        }
+                        if (minv[j] < delta) {
+                            delta = minv[j], j1 = j;
+                        }
+                    }
+                }
+                for (int j = 0; j <= m; ++j) {
+                    if (used[j]) {
+                        u[p[j]] += delta, v[j] -= delta;
+                    } else {
+                        minv[j] -= delta;
+                    }
+                }
+                j0 = j1;
+            } while (p[j0] != 0);
+            do {
+                i64 j1 = way[j0];
+                p[j0] = p[j1];
+                j0 = j1;
+            } while (j0);
+        }
+        i64 res = 0;
+        for (int i = 1; i <= m; i++) {
+            res += w[p[i]][i];
+        }
+        return res;
+    }
+};
