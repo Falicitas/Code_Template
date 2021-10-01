@@ -11,6 +11,8 @@ int norm(int x) {
     }
     return x;
 }
+
+/*在使用下述power时，一定要将a强转成a，不然没有取模*/
 template <class T>
 T power(T a, int b) {
     T res = 1;

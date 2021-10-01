@@ -1,99 +1,63 @@
-#include <bits/stdc++.h>
-#define INF 0x3f3f3f3f
-using namespace std;
-
-struct cost_flow {
-    struct edge {
-        int v, f, w, next;
-    };
-    vector<edge> e;
-    struct node {
-        int v, e;  //前导点v，前导边e
-    };
-    vector<node> p;
-    struct mypair {
-        int dis, id;
-        bool operator<(const mypair& a) const { return dis > a.dis; }
-        mypair(int d, int x) { dis = d, id = x; }
-    };
-    vector<int> head, dis, vis, h, cur, now;  //cur用作弧优化
-    int n, s, t;
-    cost_flow(int n, int s, int t)  //构造函数初始化
-        : n(n), s(s), t(t) {
-        int N = n + 5;
-        p.resize(N), head.resize(N, -1), cur.resize(N), vis.resize(N), h.resize(N), now.resize(N), dis.resize(N);
-    }
-    void init(int n_, int s_, int t_) {
-        int N = n + 5;
-        n = n_, s = s_, t = t_;
-        p.resize(N), head.resize(N, -1), cur.resize(N), vis.resize(N), h.resize(N), now.resize(N), dis.resize(N);
-    }
-    void addedge(int u, int v, int f, int w) {
-        e.push_back({v, f, w, head[u]});
-        head[u] = (int)e.size() - 1;
-    }
-    bool dijkstra() {
-        priority_queue<mypair> q;
-        fill(dis.begin(), dis.end(), INF);
-        fill(vis.begin(), vis.end(), 0);
-        dis[s] = 0;
-        q.push(mypair(0, s));
-        while (!q.empty()) {
-            int u = q.top().id;
-            q.pop();
-            if (vis[u])
-                continue;
-            vis[u] = 1;
-            for (int i = head[u]; i + 1; i = e[i].next) {
-                int v = e[i].v, nc = e[i].w + h[u] - h[v];
-                if (e[i].f && dis[v] > dis[u] + nc) {
-                    dis[v] = dis[u] + nc;
-                    p[v].v = u;
-                    p[v].e = i;
-                    if (!vis[v]) {
-                        q.push(mypair(dis[v], v));
-                    }
-                }
-            }
-        }
-        return dis[t] != INF;
-    }
-    void spfa() {
-        queue<int> q;
-        fill(h.begin(), h.end(), INF);
-        h[s] = 0, vis[s] = 1;
-        q.push(s);
-        while (!q.empty()) {
-            int u = q.front();
-            q.pop();
-            vis[u] = 0;
-            for (int i = head[u]; i + 1; i = e[i].next) {
-                int v = e[i].v;
-                if (e[i].f && h[v] > h[u] + e[i].w) {  //对势能函数求最短路（由于含负权边，使用SPFA）
-                    h[v] = h[u] + e[i].w;
-                    if (!vis[v]) {
-                        vis[v] = 1;
-                        q.push(v);
-                    }
-                }
+const int maxn = ;
+const int inf = 0x3f3f3f3f;
+// path用来保存找到一条费用最小的增广路
+int path[maxn], dis[maxn], head[maxn], vis[maxn], cnt;
+void init() {
+    cnt = 0;
+    memset(head, -1, sizeof(head));
+}
+struct ac {
+    int v, flow, cost, nex;
+} edge[maxn];
+void addEdge(int u, int v, int flow, int cost) {
+    edge[cnt] = {v, flow, cost, head[u]};
+    head[u] = cnt++;
+    edge[cnt] = {u, 0, -cost, head[v]};
+    head[v] = cnt++;
+}
+int Spfa(int s, int t) {
+    memset(dis, inf, sizeof(dis));
+    memset(vis, 0, sizeof(vis));
+    memset(path, -1, sizeof(path));
+    queue<int> que;
+    que.push(s);
+    dis[s] = 0;
+    vis[s] = 1;
+    while (!que.empty()) {
+        int u = que.front();
+        que.pop();
+        vis[u] = 0;
+        for (int i = head[u]; i != -1; i = edge[i].nex) {
+            int v = edge[i].v;
+            int flow = edge[i].flow;
+            int cost = edge[i].cost;
+            if (dis[v] > dis[u] + cost && flow > 0) {
+                dis[v] = dis[u] + cost;
+                path[v] = i;
+                if (vis[v])
+                    continue;
+                vis[v] = 1;
+                que.push(v);
             }
         }
     }
-
-    int DFS(int u, int c, int t) {
-        if (u == t) {
-            return c;
+    return dis[t] != inf;
+}
+int MCMF(int s, int t, int& cost) {  //最少费用最大流
+    int maxflow = 0;
+    while (Spfa(s, t)) {  // Spfa 找最小花费最大流
+        int flow = inf;
+        //遍历该路上的边，找到最小流量
+        // path 存的是这条路的路径，
+        // edge[i^1].v 通过反向边得到前驱节点
+        for (int i = path[t]; i != -1; i = path[edge[i ^ 1].v]) {
+            flow = min(flow, edge[i].flow);
         }
-        int r = c;   //r表示剩余可用的流量
-        now[u] = 1;  //v标志u在弧上
-        for (int& i = cur[u]; i + 1 && r; i = e[i].next) {
-            int v = e[i].v, f = e[i].f, w = e[i].w + h[u] - h[v];
-            if (!now[v] && f && dis[u] + w == dis[v]) {
-                int x = DFS(v, min(r, f), t);
-                r -= x;
-                e[i].f -= x;
-                e[i ^ 1].f += x;
-            }
+        //找到最小流量后，更新该路上的边的流量
+        for (int i = path[t]; i != -1; i = path[edge[i ^ 1].v]) {
+            edge[i].flow -= flow;
+            edge[i ^ 1].flow += flow;
+            cost += flow * edge[i].cost;
         }
         now[u] = 0;
         return c - r;  //c-r表示使用掉的最大流量
@@ -126,8 +90,5 @@ int main() {
         C.addedge(u, v, f, w);
         C.addedge(v, u, 0, -w);
     }
-    int mf, mw;
-    C.run(mf, mw);
-    std::cout << mf << " " << mw << "\n";
-    return 0;
+    return maxflow;  //最大流
 }
