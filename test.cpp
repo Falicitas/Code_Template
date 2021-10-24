@@ -1,87 +1,109 @@
-#include <algorithm>
-#include <cstdio>
-#include <cstring>
-int mod;
-namespace Math {
-	inline int pw(int base, int p, const int mod) {
-		static int res;
-		for (res = 1; p; p >>= 1, base = static_cast<long long> (base) * base % mod) if (p & 1) res = static_cast<long long> (res) * base % mod;
-		return res;
-	}
-	inline int inv(int x, const int mod) { return pw(x, mod - 2, mod); }
-}
+#include <bits/stdc++.h>
+using namespace std;
+using i64 = long long;
+struct BigInt {  //a = 0时size = 0
+    vector<int> temp;
+    vector<int> a;
+    BigInt() {
+        a = {};
+    }
+    BigInt(int a0) {
+        a = vector<int>();
+        while (a0) {
+            a.emplace_back(a0 % 10);
+            a0 /= 10;
+        }
+    }
+    BigInt(const std::vector<int>& a1)
+        : a(a1) {
+        while (!a.empty() && !a.back())
+            a.pop_back();
+    }
+    BigInt(const std::string s0) {
+        a = vector<int>();
+        for (int i = s0.length() - 1; i >= 0; i--) {
+            a.emplace_back(s0[i] - '0');
+        }
+        while (!a.empty() && !a.back())
+            a.pop_back();
+    }
+    int size() const {
+        return a.size();
+    }
+    int operator[](int idx) const {
+        // if (idx < 0 || idx >= size())
+        //     return 0;
+        return a[idx];
+    }
+    i64 get() {
+        i64 num = 0;
+        for (int i = (int)a.size() - 1; i >= 0; i--) {
+            num = num * 10 + a[i];
+        }
+        return num;
+    }
+    friend BigInt operator+(const BigInt a, const BigInt& b) {  //返回BigInt +
+        std::vector<int> res(std::max(a.size(), b.size()) + 1);
+        for (int i = 0; i < int(res.size()); ++i) {
+            res[i] = a[i] + b[i];
+            if (res[i] >= 10) {
+                res[i + 1]++;
+                res[i] -= 10;
+            }
+        }
+        return BigInt(res);
+    }
+    BigInt& operator+=(BigInt b) {  //Poly +=
+        return (*this) = (*this) + b;
+    }
 
-const int mod1 = 998244353, mod2 = 1004535809, mod3 = 469762049, G = 3;
-const long long mod_1_2 = static_cast<long long> (mod1) * mod2;
-const int inv_1 = Math::inv(mod1, mod2), inv_2 = Math::inv(mod_1_2 % mod3, mod3);
-struct Int {
-	int A, B, C;
-	explicit inline Int() { }
-	explicit inline Int(int __num) : A(__num), B(__num), C(__num) { }
-	explicit inline Int(int __A, int __B, int __C) : A(__A), B(__B), C(__C) { }
-	static inline Int reduce(const Int &x) {
-		return Int(x.A + (x.A >> 31 & mod1), x.B + (x.B >> 31 & mod2), x.C + (x.C >> 31 & mod3));
-	}
-	inline friend Int operator + (const Int &lhs, const Int &rhs) {
-		return reduce(Int(lhs.A + rhs.A - mod1, lhs.B + rhs.B - mod2, lhs.C + rhs.C - mod3));
-	}
-	inline friend Int operator - (const Int &lhs, const Int &rhs) {
-		return reduce(Int(lhs.A - rhs.A, lhs.B - rhs.B, lhs.C - rhs.C));
-	}
-	inline friend Int operator * (const Int &lhs, const Int &rhs) {
-		return Int(static_cast<long long> (lhs.A) * rhs.A % mod1, static_cast<long long> (lhs.B) * rhs.B % mod2, static_cast<long long> (lhs.C) * rhs.C % mod3);
-	}
-	inline int get() {
-		long long x = static_cast<long long> (B - A + mod2) % mod2 * inv_1 % mod2 * mod1 + A;
-		return (static_cast<long long> (C - x % mod3 + mod3) % mod3 * inv_2 % mod3 * (mod_1_2 % mod) % mod + x) % mod;
-	}
-} ;
+    friend BigInt operator/(BigInt x, int y)  //低精除，返回商
+    {
+        assert(y != 0);
+        i64 r = 0;
+        vector<int> b(x.size());
+        for (int i = (int)x.a.size() - 1; i >= 0; i--) {
+            r = r * 10 + x[i];
+            if (r >= y) {
+                b[i] = r / y;
+                r %= y;
+            } else {
+                b[i] = 0;
+            }
+        }
+        return BigInt(b);
+    }
+    friend i64 operator%(BigInt x, int y)  //低精除，返回商
+    {
+        assert(y != 0);
+        i64 r = 0;
+        vector<int> b(x.size());
+        for (int i = (int)x.a.size() - 1; i >= 0; i--) {
+            r = r * 10 + x[i];
+            if (r >= y) {
+                b[i] = r / y;
+                r %= y;
+            } else {
+                b[i] = 0;
+            }
+        }
+        return r;
+    }
+    friend bool operator<(const BigInt& x, const BigInt& y)  //x>y:1 x==y:0 x<y:-1
+    {
+        if (x.size() != y.size()) {
+            return x.size() < y.size();
+        }
+        for (int i = (int)x.size() - 1; i >= 0; i--) {
+            if (x[i] != y[i]) {
+                return x[i] < y[i];
+            }
+        }
+        return 0;
+    }
+};  // namespace BigInt
 
-#define maxn 131072
-
-namespace Poly {
-#define N (maxn << 1)
-	int lim, s, rev[N];
-	Int Wn[N | 1];
-	inline void init(int n) {
-		s = -1, lim = 1; while (lim < n) lim <<= 1, ++s;
-		for (register int i = 1; i < lim; ++i) rev[i] = rev[i >> 1] >> 1 | (i & 1) << s;
-		const Int t(Math::pw(G, (mod1 - 1) / lim, mod1), Math::pw(G, (mod2 - 1) / lim, mod2), Math::pw(G, (mod3 - 1) / lim, mod3));
-		*Wn = Int(1); for (register Int *i = Wn; i != Wn + lim; ++i) *(i + 1) = *i * t;
-	}
-	inline void NTT(Int *A, const int op = 1) {
-		for ( int i = 1; i < lim; ++i) if (i < rev[i]) std::swap(A[i], A[rev[i]]);
-		for ( int mid = 1; mid < lim; mid <<= 1) {
-			const int t = lim / mid >> 1;
-			for ( int i = 0; i < lim; i += mid << 1) {
-				for ( int j = 0; j < mid; ++j) {
-					const Int W = op ? Wn[t * j] : Wn[lim - t * j];
-					const Int X = A[i + j], Y = A[i + j + mid] * W;
-					A[i + j] = X + Y, A[i + j + mid] = X - Y;
-				}
-			}
-		}
-		if (!op) {
-			const Int ilim(Math::inv(lim, mod1), Math::inv(lim, mod2), Math::inv(lim, mod3));
-			for (register Int *i = A; i != A + lim; ++i) *i = (*i) * ilim;
-		}
-	}
-#undef N
-}
-
-int n, m;
-Int A[maxn << 1], B[maxn << 1];
 int main() {
-	scanf("%d%d%d", &n, &m, &mod); ++n, ++m;
-	for (int i = 0, x; i < n; ++i) scanf("%d", &x), A[i] = Int(x % mod);
-	for (int i = 0, x; i < m; ++i) scanf("%d", &x), B[i] = Int(x % mod);
-	Poly::init(n + m);
-	Poly::NTT(A), Poly::NTT(B);
-	for (int i = 0; i < Poly::lim; ++i) A[i] = A[i] * B[i];
-	Poly::NTT(A, 0);
-	for (int i = 0; i < n + m - 1; ++i) {
-		printf("%d", A[i].get());
-		putchar(i == n + m - 2 ? '\n' : ' ');
-	}
-	return 0;
+    BigInt bi(1002131);
+    cout << bi.get() << "\n";
 }

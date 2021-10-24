@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 struct Union {
     vector<int> fa, siz;
     Union(int n) {

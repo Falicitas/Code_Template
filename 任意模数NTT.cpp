@@ -2,13 +2,12 @@
 //使用Int数乘法当且仅当IFT时两个多项式点值相乘
 //用Int类型多项式f给初始多项式赋值g时使用g[i] = f[i].get()函数，不然会WA。
 //包括对原多项式的指数，对数，求逆运算，得到的多项式都需要f[i] = f[i].get()
-
 #include <bits/stdc++.h>
 using namespace std;
 typedef long long ll;
 int mod;
 namespace Math {
-int qp(ll base, ll n, const int mod) {
+int power(ll base, ll n, const int mod) {
     ll res = 1;
     while (n) {
         if (n & 1)
@@ -19,7 +18,7 @@ int qp(ll base, ll n, const int mod) {
     return (int)res;
 }
 int inv(int x, const int mod) {
-    return qp(x, mod - 2, mod);
+    return power(x, mod - 2, mod);
 }
 }  // namespace Math
 
@@ -29,9 +28,12 @@ const int inv_1 = Math::inv(mod1, mod2),
           inv_2 = Math::inv(mod_1_2 % mod3, mod3);
 struct Int {
     int A, B, C;
-    Int() : A(0), B(0), C(0) {}
-    Int(int __num) : A(__num), B(__num), C(__num) {}
-    Int(int __A, int __B, int __C) : A(__A), B(__B), C(__C) {}
+    Int()
+        : A(0), B(0), C(0) {}
+    Int(int __num)
+        : A(__num), B(__num), C(__num) {}
+    Int(int __A, int __B, int __C)
+        : A(__A), B(__B), C(__C) {}
     static Int reduce(const Int& x) {
         return Int(x.A + (x.A >> 31 & mod1), x.B + (x.B >> 31 & mod2),
                    x.C + (x.C >> 31 & mod3));
@@ -68,9 +70,9 @@ void init(int n) {  // init适用于DFT，IDFT，n为运算长度
         lim <<= 1, ++s;
     for (int i = 1; i < lim; ++i)
         rev[i] = rev[i >> 1] >> 1 | (i & 1) << s;
-    const Int t(Math::qp(G, (mod1 - 1) / lim, mod1),
-                Math::qp(G, (mod2 - 1) / lim, mod2),
-                Math::qp(G, (mod3 - 1) / lim, mod3));
+    const Int t(Math::power(G, (mod1 - 1) / lim, mod1),
+                Math::power(G, (mod2 - 1) / lim, mod2),
+                Math::power(G, (mod3 - 1) / lim, mod3));
     *Wn = Int(1);
     for (Int* i = Wn; i != Wn + lim; ++i)
         *(i + 1) = *i * t;
@@ -102,63 +104,22 @@ using Poly::init;
 using Poly::ntt;
 vector<Int> A, B;
 
-namespace fastIO  //支持int,ll,__int128.ull没有测试过
-{
-static char buf[100000], *h = buf,
-                         *d = buf;  //缓存开大可减少读入时间、、看题目给的空间
-#define gc                                                           \
-    h == d && (d = (h = buf) + fread(buf, 1, 100000, stdin), h == d) \
-        ? EOF                                                        \
-        : *h++  //不能用fread则换成getchar
-template <typename T>
-inline void read(T& x) {
-    int f = 1;
-    x = 0;
-    register char c(gc);
-    while (c > '9' || c < '0') {
-        if (c == '-')
-            f = -1;
-        c = gc;
-    }
-    while (c <= '9' && c >= '0')
-        x = (x << 1) + (x << 3) + (c ^ 48), c = gc;
-    x *= f;
-}
-template <typename T>
-void output(T x) {
-    if (x < 0) {
-        putchar('-');
-        x = ~(x - 1);
-    }
-    static int s[20], top = 0;
-    while (x) {
-        s[++top] = x % 10;
-        x /= 10;
-    }
-    if (!top)
-        s[++top] = 0;
-    while (top)
-        putchar(s[top--] + '0');
-}
-}  // namespace fastIO
-using fastIO::output;
-using fastIO::read;
-
 int n, m;
 int main() {
-    read(n), read(m), read(mod);
+    cin >> n >> m >> mod;
     n++, m++;
     A.resize(maxn << 1), B.resize(maxn << 1);
     for (int i = 0, x; i < n; ++i)
-        read(x), A[i] = x;
+        cin >> x, A[i] = x;
     for (int i = 0, x; i < m; ++i)
-        read(x), B[i] = x;
+        cin >> x, B[i] = x;
     Poly::init(n + m);
     Poly::ntt(A), Poly::ntt(B);
     for (int i = 0; i < Poly::lim; ++i)
         A[i] = A[i] * B[i];
     Poly::ntt(A, -1);
     for (int i = 0; i < n + m - 1; ++i)
-        printf("%d%c", A[i].get(), i == n + m - 2 ? '\n' : ' ');
+        cout << A[i].get() << " ";
+    cout << "\n";
     return 0;
 }

@@ -1,39 +1,27 @@
-#include<bits/stdc++.h>
+#include <bits/stdc++.h>
 using namespace std;
 
-const int maxs = 1e4 + 5;
-char p[maxs],s[maxs],nex[maxs];
+/*
+pi(i)表示[0,i]中最长的真前缀相同真后缀（即不含原串）
+*/
 
-void kmppre(char u[],int len)
-{
-    int i=1,j = nex[1] = 0;
-    while(i<=len){
-        while(j!=0&&u[i]!=u[j]) j = nex[j];
-        nex[++i] = ++j;
-    }
-}
-
-int kmp()
-{
-    int sLen = strlen(s+1),pLen = strlen(p+1);
-    kmppre(p,pLen);
-    int i,j;
-    i = j = 1;
-    while(i<=sLen && j<=pLen){
-        if(j == 0 || s[i] == p[j]){
-            i++;
+vector<int> prefix_function(string s) {
+    int n = (int)s.length();
+    vector<int> pi(n);
+    for (int i = 1; i < n; i++) {
+        int j = pi[i - 1];
+        while (j > 0 && s[i] != s[j])
+            j = pi[j - 1];
+        if (s[i] == s[j])
             j++;
-        }
-        else j = nex[j];
+        pi[i] = j;
     }
-    if(j==pLen+1) return i - j + 1;
-    else return -1;
+    return pi;
 }
 
-int main()
-{
-    while(gets(s+1)&&gets(p+1)){
-        printf("%d\n",kmp());
-    }
+int main() {
+    string s;
+    cin >> s;
+    prefix_function(s);
     return 0;
 }

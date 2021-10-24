@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 //保证f[0] = 1,求g^2(x) = f(x),_g = g^-1
 void PolySqrt(int deg, vector<int>& f, vector<int>& g) {
     if (deg == 1) {
@@ -11,15 +12,18 @@ void PolySqrt(int deg, vector<int>& f, vector<int>& g) {
     while (lim < (deg << 1))
         lim <<= 1;
     vector<int> h(lim), _g(lim);
-    REP(i, 0, deg - 1)
-    h[i] = f[i];
+    for (int i = 0; i < deg; i++) {
+        h[i] = f[i];
+    }
     PolyInv(deg, g, _g);
     ntt(g, lim, 1), ntt(h, lim, 1), ntt(_g, lim, 1);
-    REP(i, 0, lim - 1)
-    g[i] = 1LL * inv[2] * (1LL * g[i] + 1LL * _g[i] * h[i] % mod) % mod;
+    for (int i = 0; i < lim - 1; i++) {
+        g[i] = 1LL * inv[2] * (1LL * g[i] + 1LL * _g[i] * h[i] % mod) % mod;
+    }
     ntt(g, lim, -1);
-    REP(i, deg, lim - 1)
-    g[i] = 0;
+    for (int i = deg; i < lim - 1; i++) {
+        g[i] = 0;
+    }
 }
 
 //不保证f[0] = 1，但保证f[0]是在模mod的二次剩余

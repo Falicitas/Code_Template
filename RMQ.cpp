@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 struct RMQ {
     int n;
     vector<int> lg2;

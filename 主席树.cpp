@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 struct Chairman_Tree {  //指针型线段树
     struct node {
         int v, ls, rs;  //当前节点对应的值域包含的值的个数v

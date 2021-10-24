@@ -1,94 +1,104 @@
-//x[1]ÊÇ×îµÍÎ»£¬x[x[0]]ÊÇ×î¸ßÎ»
-namespace BigInt
-{
-    const int maxl = 2e6 + 5;
-    int temp[maxl];
-
-    void get_x(int x[],int num)//µÍ¾«×ª¸ß¾«
-    {
-        if(!num){
-            x[0] = 1;
-            x[1] = 0;
-            return ;
+#include <bits/stdc++.h>
+using namespace std;
+using i64 = long long;
+struct BigInt {  //a = 0æ—¶size = 0
+    vector<int> temp;
+    vector<int> a;
+    BigInt() {
+        a = {};
+    }
+    BigInt(int a0) {
+        a = vector<int>();
+        while (a0) {
+            a.emplace_back(a0 % 10);
+            a0 /= 10;
         }
-        x[0] = 0;
-        while(num) x[++x[0]] = num % 10,num /= 10;
     }
-
-    void get_x(int x[],char s[])//s[0]×î¸ßÎ»
-    {
-        x[0] = strlen(s);
-        for(int i=x[0],j=0;i;i--,j++) x[i] = s[j] - '0';
+    BigInt(const std::vector<int>& a1)
+        : a(a1) {
+        while (!a.empty() && !a.back())
+            a.pop_back();
     }
-
-    int get_num(int x[])
-    {
-        int num = 0;
-        for(int i=x[0];i;i--) num = num*10 + x[i];
+    BigInt(const std::string s0) {
+        a = vector<int>();
+        for (int i = s0.length() - 1; i >= 0; i--) {
+            a.emplace_back(s0[i] - '0');
+        }
+        while (!a.empty() && !a.back())
+            a.pop_back();
+    }
+    int size() const {
+        return a.size();
+    }
+    int operator[](int idx) const {
+        if (idx < 0 || idx >= size())
+            return 0;
+        return a[idx];
+    }
+    i64 get() {
+        i64 num = 0;
+        for (int i = (int)a.size() - 1; i >= 0; i--) {
+            num = num * 10 + a[i];
+        }
         return num;
     }
-
-    void mul(int x[],int y[],int z[])//¸ß¾«³Ë£¬´¢´æµ½z[].z[]¿ÉÌîx*
-    {
-        memset(temp,0,sizeof temp);
-        for(int i=1;i<=x[0];i++){
-            for(int j=1;j<=y[0];j++) temp[i+j-1]+=x[i]*y[j];
-        }
-        temp[0] = x[0] + y[0];
-        for(int i=1;i<=temp[0];i++){
-            if(temp[i]>=10){
-                temp[i+1]+=temp[i]/10;
-                temp[i]%=10;
+    friend BigInt operator+(const BigInt& a, const BigInt& b) {  //è¿”å›žBigInt +
+        std::vector<int> res(std::max(a.size(), b.size()) + 1);
+        for (int i = 0; i < int(res.size()); ++i) {
+            res[i] = a[i] + b[i];
+            if (res[i] >= 10) {
+                res[i + 1]++;
+                res[i] -= 10;
             }
         }
-        while(temp[0]>1&&temp[temp[0]]==0) temp[0]--;
-        memcpy(z,temp,sizeof temp);
+        return BigInt(res);
+    }
+    BigInt& operator+=(BigInt b) {  //Poly +=
+        return (*this) = (*this) + b;
     }
 
-    void add(int x[],int y[],int z[])
+    friend BigInt operator/(BigInt x, int y)  //ä½Žç²¾é™¤ï¼Œè¿”å›žå•†
     {
-        memset(temp,0,sizeof temp);
-        for(int i=1;i<=x[0]&&i<=y[0];i++) temp[i] = x[i] + y[i];
-        for(int i=y[0]+1;i<=x[0];i++) temp[i] = x[i];
-        for(int i=x[0]+1;i<=y[0];i++) temp[i] = y[i];
-        temp[0] = max(x[0],y[0])+1;
-        temp[temp[0]]=0;
-        for(int i=1;i<=temp[0];i++){
-            if(temp[i]>=10){
-                temp[i+1]++;
-                temp[i]-=10;
+        assert(y != 0);
+        i64 r = 0;
+        vector<int> b(x.size());
+        for (int i = (int)x.a.size() - 1; i >= 0; i--) {
+            r = r * 10 + x[i];
+            if (r >= y) {
+                b[i] = r / y;
+                r %= y;
+            } else {
+                b[i] = 0;
             }
         }
-        while(temp[0]>1&&temp[temp[0]]==0) temp[0]--;
-        memcpy(z,temp,sizeof temp);
+        return BigInt(b);
     }
-
-    int div0(int x[],int y,int z[])//µÍ¾«³ý¸ß¾«
+    friend i64 operator%(BigInt x, int y)  //ä½Žç²¾é™¤ï¼Œè¿”å›žå•†
     {
-        memset(temp,0,sizeof temp);
-        ll r=0;
-        for(int i=x[0];i>=1;i--){
-            r=r*10+x[i];
-            if(r>=y){
-                temp[i]=r/y;
-                r%=y;
-            }
-            else{
-                temp[i]=0;
+        assert(y != 0);
+        i64 r = 0;
+        vector<int> b(x.size());
+        for (int i = (int)x.a.size() - 1; i >= 0; i--) {
+            r = r * 10 + x[i];
+            if (r >= y) {
+                b[i] = r / y;
+                r %= y;
+            } else {
+                b[i] = 0;
             }
         }
-        temp[0]=x[0];
-        while(temp[0]>1&&temp[temp[0]]==0) temp[0]--;
-        memcpy(z,temp,sizeof temp);
-        return r%y;
+        return r;
     }
-
-    int cmp(int x[],int y[])//x>y:1 x==y:0 x<y:-1
+    friend bool operator<(const BigInt& x, const BigInt& y)  //x>y:1 x==y:0 x<y:-1
     {
-        if(x[0]!=y[0]) return x[0] > y[0] ? 1 : -1;
-        else{
-            for(int i=x[0];i;i--) if(x[i]!=y[i]) return x[i] > y[i] ? 1 : -1;
-            return 0;
+        if (x.size() != y.size()) {
+            return x.size() < y.size();
         }
+        for (int i = (int)x.size() - 1; i >= 0; i--) {
+            if (x[i] != y[i]) {
+                return x[i] < y[i];
+            }
+        }
+        return 0;
     }
-}
+};  // namespace BigInt

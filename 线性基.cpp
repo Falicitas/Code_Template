@@ -8,7 +8,6 @@ struct Linear_base {
     Linear_base() {
         lb = vector<u64>(64);
     }
-
     void insert(u64 x) {
         for (int i = 63; i >= 0; i--) {
             if (x & (1ull << i)) {
@@ -21,7 +20,6 @@ struct Linear_base {
             }
         }
     }
-
     bool check(u64 x) {  //查看是否存在在一个子集，使异或和为x
         for (int i = 63; i >= 0; i--) {
             if (x & (1ull << i)) {

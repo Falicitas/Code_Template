@@ -1,6 +1,5 @@
 #include<bits/stdc++.h>
 using namespace std;
-
 struct segtree{
 	int n;
 	static const int N = 1e5 + 5;
