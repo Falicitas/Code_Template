@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 constexpr int P = 1000000007;
+
 using i64 = long long;
 // assume -P <= x < 2P
 int norm(int x) {
@@ -25,7 +26,8 @@ T power(T a, int b) {
 }
 struct Z {
     int x;
-    Z(int x = 0) : x(norm(x)) {}
+    Z(int x = 0)
+        : x(norm(x)) {}
     int val() const { return x; }
     Z operator-() const { return Z(norm(P - x)); }
     Z inv() const {

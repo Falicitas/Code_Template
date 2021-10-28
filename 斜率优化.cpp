@@ -1,93 +1,111 @@
-ll getans(int i,int j){return ;}
+#include <bits/stdc++.h>
+using namespace std;
 
-ll Y(int j){return ;}
+using i64 = long long;
+using f64 = long double;
+constexpr i64 inf = 0x3f3f3f3f3f3f3f3f;
+constexpr f64 eps = 1e-9;  ///ä¸delta Xçš„å–å€¼ç›´æ¥ç›¸å…³
 
-ll X(int j){return ;}
+vector<i64> f, A, B, g;  //fæ˜¯æœ€ç»ˆå–å€¼
 
-//bool slope(int j2,int j1,int i){return 1LL * (Y(j2) - Y(j1)) * (X(j1) - X(i)) >= 1LL * (Y(j1) - Y(i)) * (X(j2) - X(j1));}//ÏÂÍ¹°ü
-bool slope(int j2,int j1,int i){return 1.0 * (Y(j2) - Y(j1)) / (X(j2) - X(j1)) + eps > 1.0 * (Y(j1) - Y(i)) / (X(j1) - X(i));}//±¬long longÊ±»»Õâ¸ö¡£eps=1e-13
-//bool slope(int j2,int j1,int i){return 1.0 * (Y[j2] - Y[j1]) / (X[j2] - X[j1]) + eps > 1.0 * (Y[j1] - Y[i]) / (X[j1] - X[i]);}
-
-
-void solve1()//×´Ì¬iµÄĞ±ÂÊµ¥ÔöÇÒb[j]µ¥Ôö£ºµ¥µ÷¶ÓÁĞ¿Éµ¯¶ÓÊ×
-{
-    static int q[maxn];
-    int head = 1,tail = 1;//[)
-    q[tail++] = f[0] = 0;
-    REP(i,1,n){
-        while(head+1<tail && getans(i,q[head]) >= getans(i,q[head+1])){
-            head++;
-        }
-        f[i] = getans(i,q[head]);
-
-        while(head+1<tail && slope(q[tail-2],q[tail-1],i)){
-            tail--;
-        }
-        q[tail++] = i;
+struct SlopeDP {
+    vector<int> stk;
+    SlopeDP() {}
+    i64 getans(int i, int j) {
+        return f[j] - A[j] - A[j] * j + (i64)j * (j + 1) / 2 + A[j] * i -
+               (i64)i * j + B[i] + A[i] + (i64)i * (i - 1) / 2;  //f[i]å…³äºjçš„è¡¨è¾¾å¼
     }
-}
-
-void solve2()//×´Ì¬iµÄĞ±ÂÊ²»µ¥µ÷µ«b[j]µ¥Ôö£ºµ¥µ÷Õ»Í¹°üÉÏ¶ş·Ö
-{
-    static int stk[maxn];
-    int top = 1;
-    stk[top++] = f[0] = 0;
-    REP(i,1,n){
-        int l = 1,r = top-1;
-        while(l<r){
-            mid = l + (r - l) / 2;
-            if(getans(i,stk[mid])>=getans(i,stk[mid+1])) l = mid + 1;
-            else r = mid;
+    i64 Y(int j) { return f[j] - A[j] - A[j] * j + (i64)j * (j + 1) / 2; }
+    i64 X(int j) { return A[j] - j; }
+    i64 K(int i) { return -i; }  //-iè¡¨ç¤ºy=kx+bçš„k
+    f64 slope(int i, int j) { return (f64)(Y(j) - Y(i)) / (X(j) - X(i)); };
+    void add(int j) {  //è¿™é‡Œç»´æŠ¤ä¸‹å‡¸åŒ…ï¼Œopt=minã€‚opt=maxæ—¶ï¼Œè°ƒè½¬æ¯”è¾ƒç¬¦
+        while (stk.size() > 1) {
+            int q = *prev(prev(stk.end())), p = *prev(stk.end());
+            if (slope(q, p) + eps > slope(p, j)) {
+                stk.pop_back();
+            } else {
+                break;
+            }
         }
-        f[i] = getans(i,stk[l]);
-        while(top>2 && slope(stk[top-2],stk[top-1],i)){
-            top--;
+        stk.emplace_back(j);
+    }
+    i64 query(int i) {
+        if (stk.size() == 0) {
+            return inf;
         }
-        stk[top++] = i;
-    }
-}
-
-//cdq·ÖÖÎ°æ±¾¡£ÓÃµ¥µ÷Õ»
-
-bool cmp(int i,int j)
-{
-    return b[i] < b[j];
-}
-
-void solve(int i)
-{
-    int l = 1,r = top - 1;
-    if(top<=1) return ;
-    while(r - l > 4){
-        int m1 = l + (r - l) / 3;
-        int m2 = r - (r - l) / 3;
-        if(getans(i,stk[m1])>getans(i,stk[m2]))
-            l = m1;
-        else
-            r = m2;
-    }
-    while(l<=r) g[i] = min(g[i],getans(i,stk[l++]));
-}
-
-void cdq(int l,int r)
-{
-    static int L[maxn],R[maxn];
-    if(l>=r) return ;
-    int cl,cr;
-    cl = cr = 0;
-    int mid = l + (r - l) / 2;
-    cdq(l,mid);
-    REP(i,l,mid) if(!h[i][1]) L[++cl] = h[i][0];
-    REP(i,mid+1,r) if(h[i][1]) R[++cr] = h[i][0];
-    top = 1;
-    sort(L+1,L+cl+1,cmp),sort(R+1,R+cr+1,cmp);
-    for(int i=1,j=1;j<=cr;j++){
-        while(i<=cl&&...){//some comparing factors
-            if(top>1&&b[stk[top-1]]==b[L[i]]) top--;//stkÖĞµÄ×îÍ·ÔªËØÊÇtop-1. =_=
-            while(top>2&&slope(stk[top-2],stk[top-1],L[i])) top--;
-            stk[top++] = L[i++];
+        int id = 0;
+        int l = 0, r = (int)stk.size() - 1;
+        while (l < r) {
+            int m = l + r >> 1;
+            if (slope(stk[m], stk[m + 1]) < K(i) + eps) {
+                id = m + 1;
+                l = m + 1;
+            } else {
+                r = m;
+            }
         }
-        solve(R[j]);
+        return getans(i, stk[id]);
     }
-    cdq(mid+1,r);
+};
+
+struct Cdq {
+    vector<int> id;
+    Cdq(vector<int> id_)
+        : id(id_) {
+        sort(id.begin(), id.end());  //è¿™é‡Œé»˜è®¤ç¬¬ä¸€å…³é”®å­—æ˜¯ä¸‹æ ‡ï¼Œå³ä¿è¯cdqä¹‹å‰i<j,id[i]<id[j]
+    }
+    function<void(int, int)> cdq = [&](int l, int r) {
+        if (l < r) {
+            int m = l + r >> 1;
+            cdq(l, m);
+            SlopeDP sdp;
+            vector<int> id1, id2;
+            for (int i = l; i <= m; i++) {
+                id1.emplace_back(id[i]);  //è¿™é‡Œé»˜è®¤å·¦åŠåŒºé—´çš„ç‚¹éƒ½å¯ä»¥è´¡çŒ®ç»™å³åŠåŒºé—´ï¼Œå…·ä½“éœ€è¦çœ‹é¢˜ç›®çš„dpç»“æ„
+            }
+            for (int i = m + 1; i <= r; i++) {
+                id2.emplace_back(id[i]);
+            }
+            function<bool(int, int)> cmp = [&](int x, int y) {  //è¿™é‡ŒæŒ‰ç…§ç¬¬äºŒå…³é”®å­—ï¼Œä¹Ÿå°±æ˜¯y=kx+bçš„xæ’åº
+                return sdp.X(x) <= sdp.X(y);
+            };
+            sort(id1.begin(), id1.end(), cmp);
+            sort(id2.begin(), id2.end(), cmp);
+            /*ä¸‹åˆ—æ‰€æœ‰æ³¨é‡Šæ˜¯è°ƒè¯•ï¼Œæ ¹æ®éœ€è¦è§£æ³¨é‡Šçœ‹è½¬ç§»è¿‡ç¨‹*/
+            // cout << l << " " << r << ",id1:";
+            // for (auto x : id1) {
+            //     cout << x << " ";
+            // }
+            // cout << ",id2:";
+            // for (auto x : id2) {
+            //     cout << x << " ";
+            // }
+            // cout << ".";
+            // cout << l << " " << r << "\n";
+            int p = 0, q = 0;
+            while (q < id2.size()) {
+                while (p < id1.size() &&
+                       sdp.X(id[p]) <= sdp.X(id[q])) {
+                    sdp.add(id1[p]);
+                    p++;
+                }
+
+                int i = id2[q];
+                i64 buf;  //è°ƒè¯•ç”¨
+                // cout << "[p=" << p << "],";
+                f[i] = min(f[i], buf = sdp.query(i));
+                // cout << "f[" << i << "]:" << buf << ",";
+                q++;
+                // cout << ")";
+            }
+            // cout << "\n";
+            // cout << l << " " << r << "\n";
+            cdq(m + 1, r);
+        }
+    };
+};
+
+int main() {
+    return 0;
 }

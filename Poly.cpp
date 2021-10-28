@@ -1,9 +1,9 @@
 #include <bits/stdc++.h>
-using i64 = long long;
 using u64 = unsigned long long;
 using u32 = unsigned;
 constexpr int P = 998244353, g = 3;
 std::vector<int> rev, roots{0, 1};
+
 int power(int a, int b) {
     int res = 1;
     for (; b; b >>= 1, a = 1ll * a * a % P)

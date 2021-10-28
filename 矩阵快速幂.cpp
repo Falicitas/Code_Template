@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 constexpr int P = 1000000007;
 using i64 = long long;
 // assume -P <= x < 2P

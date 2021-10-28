@@ -1,8 +1,13 @@
 #include <bits/stdc++.h>
 using namespace std;
+<<<<<<< HEAD
 
 constexpr int P = 998244353;
 
+=======
+constexpr int P = 1e9 + 7;
+
+>>>>>>> d52959b6c352caad62ea033fef9a878f3fe2b565
 void add(int& x, int y) {
     (x += y) >= P && (x -= P);
 }

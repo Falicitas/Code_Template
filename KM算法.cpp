@@ -2,7 +2,6 @@
 using namespace std;
 
 using i64 = long long;
-
 struct KM {  //求最小完美匹配的板子。求最大完美匹配，将边权矩阵取负即可。对于边数=O(n^2)，快过费用流
     const i64 inf = 0x3f3f3f3f3f3f3f3f;
     vector<vector<i64>> w;

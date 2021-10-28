@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
+
 struct Hungary {  //点集范围[0,n-1]
     vector<vector<int>> e;
     vector<int> left, link, vis;
@@ -22,7 +23,6 @@ struct Hungary {  //点集范围[0,n-1]
         }
         return 0;
     }
-
     vector<int> hungary() {
         int match = 0;
         for (auto u : left) {      //枚举其中一个点集

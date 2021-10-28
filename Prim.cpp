@@ -1,8 +1,8 @@
 #include <bits/stdc++.h>
 using namespace std;
 constexpr int inf = 0x3f3f3f3f;
+using i64 = long long;
 struct Prim {
-    typedef long long ll;
     int n;  //用于找最小距离来扩展
     vector<int> mark, dist, to;
     vector<vector<pair<int, int>>> e;  //二元组为{v,距离w}
@@ -11,10 +11,11 @@ struct Prim {
         mark.resize(n + 1), dist.resize(n + 1), to.resize(n + 1);
     }
     int prim() {
-        ll ans = 0;
+        i64 ans = 0;
         int rt = 1, cc = n;
-        for (int i = 0; i <= n; i++)
+        for (int i = 0; i <= n; i++) {
             dist[i] = inf;
+        }
         dist[rt] = 0;
         while (cc) {
             int cur = 0;
@@ -24,8 +25,7 @@ struct Prim {
             //if (cc < n) link(cur, to[cur]);  //MST 连边
             ans += dist[cur];
             cc--, mark[cur] = 1;
-            for (auto vw : e[cur]) {
-                auto v = vw.first, w = vw.second;
+            for (auto [v, w] : e[cur]) {
                 if (!mark[v] && dist[v] > w) {
                     dist[v] = w;
                     to[v] = cur;

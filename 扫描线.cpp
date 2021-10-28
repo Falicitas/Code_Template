@@ -1,12 +1,12 @@
 #include <bits/stdc++.h>
 using namespace std;
-
 /*使用标记永久化，此时sum[1]记录线段覆盖的区间长度*/
 struct SegmentTree {
     int n;
     std::vector<int> tag, sum;
     std::vector<int> y;  //线段树点的实际y值
-    SegmentTree(int n, vector<int> y_) : n(n), tag(4 * n), sum(4 * n), y(y_) {}
+    SegmentTree(int n, vector<int> y_)
+        : n(n), tag(4 * n), sum(4 * n), y(y_) {}
     void rangeAdd(int p, int l, int r, int x, int y, int v) {
         if (r <= x || y <= l) {
             return;

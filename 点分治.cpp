@@ -1,45 +1,46 @@
+#include <bits/stdc++.h>
+using namespace std;
 const int maxn = 1e5 + 5;
-int size[maxn],maxs[maxn],totsize,root;
+constexpr int inf = 0x3f3f3f3f;
+int siz[maxn], maxs[maxn], totsize, root;
 bool mark[maxn];
+vector<vector<int>> e;
+int n;
 
-void dfs1(int u,int fa)
-{
-    size[u] = 1,maxs[u] = 0;
-    UREP(i,u){
-        int v = edge[i].v;
-        if(v!=fa&&!mark[v]){
-            dfs1(v,u);
-            size[u] += size[v];
-            maxs[u] = max(maxs[u],size[v]);
+void dfs1(int u, int fa) {
+    siz[u] = 1, maxs[u] = 0;
+    for (auto v : e[u]) {
+        if (v != fa && !mark[v]) {
+            dfs1(v, u);
+            siz[u] += siz[v];
+            maxs[u] = max(maxs[u], siz[v]);
         }
     }
-    maxs[u] = max(maxs[u],totsize-size[u]);
-    if(maxs[u]<maxs[root]) root = u;
+    maxs[u] = max(maxs[u], totsize - siz[u]);
+    if (maxs[u] < maxs[root])
+        root = u;
 }
 
-void solve(int rt)
-{
-    mark[rt]=1;
-¡¡¡¡/*
-¡¡¡¡¡¡¡¡deal with ans
-¡¡¡¡*/
+void solve(int rt) {
+    mark[rt] = 1;
+    /*
+ã€€ã€€ã€€ã€€deal with ans
+ã€€ã€€*/
     int tnt = totsize;
-    UREP(i,rt){
-        int v = edge[i].v;
-        if(!mark[v]){
-            totsize = (size[v]>size[rt] ? tnt - size[rt] : size[v]);
-            root=0;
-            dfs1(v,0);
+    for (auto v : e[rt]) {
+        if (!mark[v]) {
+            totsize = (siz[v] > siz[rt] ? tnt - siz[rt] : siz[v]);
+            root = 0;
+            dfs1(v, 0);
             solve(root);
         }
     }
 }
 
-void intn()
-{
+void intn() {
     maxs[0] = inf;
     root = 0;
     totsize = n;
-    dfs1(1,0);
+    dfs1(1, 0);
     solve(root);
 }

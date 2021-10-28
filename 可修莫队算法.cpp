@@ -1,54 +1,63 @@
-void add(int x)
-{
+void add(int x) {
     cnt[x]++;
-    if(cnt[x]==1)ans++;
+    if (cnt[x] == 1)
+        ans++;
 }
 
-void del(int x)
-{
+void del(int x) {
     cnt[x]--;
-    if(cnt[x]==0)ans--;
+    if (cnt[x] == 0)
+        ans--;
 }
 
-void add(int l,int r,int t)//chg_idx为t时刻修改节点chg_idx[t]，前后的颜色为pre[t],cur[t]
+void add(int l, int r, int t)  //chg_idx为t时刻修改节点chg_idx[t]，前后的颜色为pre[t],cur[t]
 {
-    if(l<=chg_idx[t]&&chg_idx[t]<=r){
+    if (l <= chg_idx[t] && chg_idx[t] <= r) {
         cnt[pre[t]]--;
-        if(!cnt[pre[t]]) ans--;
-        if(!cnt[cur[t]]) ans++;
+        if (!cnt[pre[t]])
+            ans--;
+        if (!cnt[cur[t]])
+            ans++;
         cnt[cur[t]]++;
     }
     a[chg_idx[t]] = cur[t];
 }
 
-void del(int l,int r,int t)
-{
-    if(l<=chg_idx[t]&&chg_idx[t]<=r){
+void del(int l, int r, int t) {
+    if (l <= chg_idx[t] && chg_idx[t] <= r) {
         cnt[cur[t]]--;
-        if(!cnt[cur[t]]) ans--;
-        if(!cnt[pre[t]]) ans++;
+        if (!cnt[cur[t]])
+            ans--;
+        if (!cnt[pre[t]])
+            ans++;
         cnt[pre[t]]++;
     }
     a[chg_idx[t]] = pre[t];
 }
 
-struct node
-{
-    int l,r,time,id;
-    bool operator<(const node&rhs)
-    {
-        if(l / S != rhs.l / S) return l / S < rhs.l / S;
-        if(r / S != rhs.r / S) return r / S < rhs.r / S;
+struct node {
+    int l, r, time, id;
+    bool operator<(const node& rhs) {
+        if (l / S != rhs.l / S)
+            return l / S < rhs.l / S;
+        if (r / S != rhs.r / S)
+            return r / S < rhs.r / S;
         return time < rhs.time;
-    }//奇偶性排序基本无优化
-}q[maxn];
+    }  //奇偶性排序基本无优化
+} q[maxn];
 
 //在获取答案时：init l = r = t = 0。cnt初始视情况而定
-while(t<q[i].time) add(l,r,++t);
-while(t>q[i].time) del(l,r,t--);
-while(l>q[i].l) add(a[--l]);
-while(r<q[i].r) add(a[++r]);
-while(l<q[i].l) del(a[l++]);
-while(r>q[i].r) del(a[r--]);
+while (t < q[i].time)
+    add(l, r, ++t);
+while (t > q[i].time)
+    del(l, r, t--);
+while (l > q[i].l)
+    add(a[--l]);
+while (r < q[i].r)
+    add(a[++r]);
+while (l < q[i].l)
+    del(a[l++]);
+while (r > q[i].r)
+    del(a[r--]);
 
-S = ceil(pow(n,2.0/3));
+S = ceil(pow(n, 2.0 / 3));

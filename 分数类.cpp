@@ -1,27 +1,27 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-typedef long long ll;
-ll gcd(ll x, ll y) {
+typedef long long i64;
+i64 gcd(i64 x, i64 y) {
     return y == 0 ? x : gcd(y, x % y);
 }
 class frac {  //用于结果为分数且取模的打表
    public:
-    ll x, y;  //x/y
+    i64 x, y;  //x/y
    private:
     void yf() {  //约分
         if (y < 0)
             x = -x, y = -y;
-        ll a = gcd(abs(x), y);
+        i64 a = gcd(abs(x), y);
         x /= a, y /= a;
     }
 
    public:
-    frac(ll x = 0, ll y = 1)  //初始化为0.
+    frac(i64 x = 0, i64 y = 1)  //初始化为0.
         : x(x), y(y) { yf(); }
-    frac(ll num, ll mod, ll t) {  //将取模后的值转为分数。t是极可能的分子值域上限，需要人工确定
+    frac(i64 num, i64 mod, i64 t) {  //将取模后的值转为分数。t是极可能的分子值域上限，需要人工确定
         for (int i = 1; i <= 1000000; i++) {
-            ll z = i * num % mod;
+            i64 z = i * num % mod;
             if (z <= t) {
                 x = z, y = i;
                 return;
@@ -40,7 +40,7 @@ class frac {  //用于结果为分数且取模的打表
     }
 };
 frac operator+(frac a, frac b) {
-    ll d = gcd(a.y, b.y);
+    i64 d = gcd(a.y, b.y);
     b.y /= d, a.y /= d;
     return frac(a.x * b.y + a.y * b.x, d * a.y * b.y);
 }
@@ -87,8 +87,8 @@ bool operator!=(frac a, frac b) {
     return (a < b) || (b < a);
 }
 
-ll qp(ll base, ll n, ll mod) {
-    ll res = 1;
+i64 qp(i64 base, i64 n, i64 mod) {
+    i64 res = 1;
     while (n) {
         if (n & 1)
             res = res * base % mod;

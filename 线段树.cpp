@@ -154,9 +154,18 @@ struct Info {
 
 Info operator+(const Info& a, const Info& b) {
     // Info c;
+<<<<<<< HEAD
     // c.l = a.l == a.len ? a.len + b.l :
     // a.l;//示例：证明返回Info(),l,r维护正常：Info()时，l = len =
     // 0，所以会触发a.len+b.l c.r = b.r == b.len ? a.r + b.len : b.r; c.len =
     // a.len + b.len; c.s = a.s + b.s + 1LL * a.r * b.l; return c;
 }
 }  // namespace X
+=======
+    // c.l = a.l == a.len ? a.len + b.l : a.l;//示例：证明返回Info(),l,r维护正常：Info()时，l = len = 0，所以会触发a.len+b.l
+    // c.r = b.r == b.len ? a.r + b.len : b.r;
+    // c.len = a.len + b.len;
+    // c.s = a.s + b.s + 1LL * a.r * b.l;
+    // return c;
+}
+>>>>>>> d52959b6c352caad62ea033fef9a878f3fe2b565
