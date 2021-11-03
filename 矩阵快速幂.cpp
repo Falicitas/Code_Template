@@ -77,7 +77,11 @@ struct mat {
     void clear() {
         c = vector<vector<Z>>(n, vector<Z>(m));
     }
-    mat operator*(const mat& temp) {
+    vector<Z>& operator[](int x) {
+        return c[x];
+    };
+    mat
+    operator*(mat temp) {
         mat ans(n, temp.m);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < temp.m; j++) {
