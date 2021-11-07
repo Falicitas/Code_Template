@@ -119,6 +119,6 @@ int main() {
     string a, b;
     int P;
     cin >> a >> P >> b;
-    cout << Ex(a, b, P) << "\n";
+    cout << ExEuler(a, b, P) << "\n";
     return 0;
 }
