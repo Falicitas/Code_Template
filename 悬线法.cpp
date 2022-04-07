@@ -2,9 +2,9 @@
 using namespace std;
 
 struct suspended_line {
-    vector<vector<int>> a, l, r, up;  //l_{i,j}表示往左延多远，up表示往上延多远。run时l_{i,j}表示i,j到悬线顶的悬线部分左边可以延多远
+    vector<vector<int>> a, l, r, up;  // l_{i,j}表示往左延多远，up表示往上延多远。run时l_{i,j}表示i,j到悬线顶的悬线部分左边可以延多远
     int n, m;
-    suspended_line(int n, int m, vector<vector<int>> a)  //a[i][j] = 0表示无障碍
+    suspended_line(int n, int m, vector<vector<int>> a)  // a[i][j] = 0表示无障碍
         : n(n), m(m), a(a) {
         l = vector<vector<int>>(n, vector<int>(m));
         r = l, up = l;

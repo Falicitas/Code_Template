@@ -3,7 +3,7 @@ using namespace std;
 constexpr int P = 1000000007;
 
 using i64 = long long;
-// assume -P <= x < 2P
+// assume -P <= x < 2P, or x shall be mod, otherwise it will go wrong
 int norm(int x) {
     if (x < 0) {
         x += P;
@@ -14,7 +14,6 @@ int norm(int x) {
     return x;
 }
 
-/*在使用下述power时，一定要将a强转成a，不然没有取模*/
 template <class T>
 T power(T a, int b) {
     T res = 1;
@@ -73,3 +72,5 @@ struct Z {
         return os;
     }
 };
+/*在使用上述power时，一定要将a强转成Z，不然没有取模*/
+/*初始值为i64转Z类会爆。建议变量参与运算前都是Z类运算*/

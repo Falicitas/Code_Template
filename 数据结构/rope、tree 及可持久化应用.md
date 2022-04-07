@@ -58,7 +58,7 @@ signed main() {
         if (op == 2)
             t.erase(t.lower_bound({x, 0}));  //删除x（删除单个元素）
         if (op == 3)
-            cout << t.order_of_key({x, 0}) + 1 << endl;  //x的排名（小于x的元素个数+1）
+            cout << t.order_of_key({x, 0}) + 1 << endl;  //x的排名（order_of_key = 小于x的元素个数，然后+1）
         if (op == 4)
             cout << t.find_by_order(x - 1)->first << endl;  //排名为x的元素（第x小）
         if (op == 5)

@@ -1,15 +1,15 @@
 #include <bits/stdc++.h>
 using namespace std;
 using i64 = long long;
-using u64 = unsigned long long;
+using u64 = int;
 
 struct Linear_base {
     vector<u64> lb;
     Linear_base() {
-        lb = vector<u64>(64);
+        lb = vector<u64>(27);
     }
     void insert(u64 x) {
-        for (int i = 63; i >= 0; i--) {
+        for (int i = 26; i >= 0; i--) {
             if (x & (1ull << i)) {
                 if (!lb[i]) {
                     lb[i] = x;
@@ -21,7 +21,7 @@ struct Linear_base {
         }
     }
     bool check(u64 x) {  //查看是否存在在一个子集，使异或和为x
-        for (int i = 63; i >= 0; i--) {
+        for (int i = 26; i >= 0; i--) {
             if (x & (1ull << i)) {
                 if (!lb[i]) {
                     return false;
@@ -34,13 +34,13 @@ struct Linear_base {
     }
     u64 qmax() {
         u64 res = 0;
-        for (int i = 63; i >= 0; i--) {
+        for (int i = 26; i >= 0; i--) {
             res = max(res, res ^ lb[i]);
-            return res;
         }
+        return res;
     }
     u64 qmin() {
-        for (int i = 0; i <= 63; i++) {
+        for (int i = 0; i <= 26; i++) {
             if (lb[i]) {
                 return lb[i];
             }
@@ -49,3 +49,26 @@ struct Linear_base {
 
     //剩个找第k大
 };
+
+// 线性基合并过程
+// Basis tmp = T[rt << 1], v1 = T[rt << 1], v2 = T[rt << 1 | 1];
+// for (LL i = 0; i < 32; i++) {
+//     if (v2.basis[i]) {
+//         bool flag = true;
+//         LL x = v2.basis[i], now = 0;
+//         for (LL j = 31; j >= 0; j--) {
+//             if (x & (1ll << j)) {
+//                 if (!tmp.basis[j]) {
+//                     flag = false;
+//                     tmp.basis[j] = x;
+//                     v1.basis[j] = now;
+//                     break;
+//                 }
+//                 x ^= tmp.basis[j];
+//                 now ^= v1.basis[j];
+//             }
+//         }
+//         if (flag)
+//             T[rt].Update(now);
+//     }
+// }

@@ -42,8 +42,8 @@ struct Gauss {
         }
         for (int i = now; i <= n; i++)
             if (fabs(a[i][n + 1]) > eps)
-                return 0;             //无解
-        return now == n + 1 ? 1 : 2;  //1唯一解；2无穷多解
+                return 0;             //鏃犺В
+        return now == n + 1 ? 1 : 2;  // 1鍞竴瑙ｏ紱2鏃犵┓澶氳В
     }
 };
 

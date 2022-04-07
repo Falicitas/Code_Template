@@ -20,8 +20,7 @@ bool liEu(i64 a, i64 b, i64 c, i64& x, i64& y) {
     if (c % d != 0)
         return 0;
     i64 k = c / d;
-    x *= k;  //得到一组特解，求最小非负整数，则x = (x % (b / d) + b / d) % (b /
-             // d);
+    x *= k;
     y *= k;
     return 1;
 }
